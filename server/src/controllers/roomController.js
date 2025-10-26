@@ -1,0 +1,63 @@
+import Room from "../models/Room.js";
+import User from "../models/User.js";
+
+// Generate random 6-digit code
+const generateRoomCode = () =>
+  Math.floor(100000 + Math.random() * 900000).toString();
+
+// Create Room
+export const createRoom = async (req, res) => {
+  try {
+    const { timerOption, userId } = req.body;
+
+    const roomCode = generateRoomCode();
+    const room = await Room.create({
+      roomCode,
+      players: [userId],
+      timerOption,
+    });
+
+    res.status(201).json(room);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create room", error });
+  }
+};
+
+// Join Room
+export const joinRoom = async (req, res) => {
+  try {
+    const { roomCode, userId } = req.body;
+
+    const room = await Room.findOne({ roomCode }).populate(
+      "players",
+      "username"
+    );
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    if (room.players.length >= 2)
+      return res.status(400).json({ message: "Room is full" });
+
+    if (!room.players.includes(userId)) room.players.push(userId);
+    await room.save();
+
+    res.status(200).json(room);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to join room", error });
+  }
+};
+
+// Get Room Info
+export const getRoom = async (req, res) => {
+  try {
+    const { roomCode } = req.params;
+    const room = await Room.findOne({ roomCode }).populate(
+      "players",
+      "username"
+    );
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    res.status(200).json(room);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch room", error });
+  }
+};

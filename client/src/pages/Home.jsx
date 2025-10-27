@@ -17,60 +17,57 @@ const Home = () => {
     setUserInfo(storedUser);
   }, [navigate]);
 
-   const handleCreateRoom = async () => {
-     try {
-       const storedUser = JSON.parse(localStorage.getItem("userInfo"));
-       const token = storedUser?.token;
-
-       if (!token) {
-         toast.error("You are not logged in!");
-         return;
-       }
-
-       const { data } = await axios.post(
-         "http://localhost:4000/api/rooms/create",
-         {}, // body data if needed
-         {
-           headers: {
-             Authorization: `Bearer ${token}`, // <-- send token
-           },
-         }
-       );
-       setRoomCode(data.roomCode)
-       toast.success(`Room created! Code: ${data.roomCode}`);
-     } catch (error) {
-       console.log(error);
-       toast.error(error.response?.data?.message || "Failed to create room");
-     }
-   };
-
-  const handleJoinRoom = async () => {
+  const handleCreateRoom = async () => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("userInfo"));
       const token = storedUser?.token;
 
-      if (!token) return toast.error("You are not logged in!");
-      if (joinCode.length !== 6)
-        return toast.error("Enter a valid 6-digit room code");
-
-      const { data } = await axios.post(
-        `http://localhost:4000/api/rooms/join/${joinCode}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // Show waiting modal if opponent hasn't joined
-      if (data.room.status === "waiting") {
-        toast.info("Waiting for opponent to join...");
-        // Poll backend or use Socket.IO for real-time start
-        setTimeout(() => checkRoomStatus(joinCode), 1000);
-      } else {
-        navigate(`/game/${joinCode}`);
+      if (!token) {
+        toast.error("You are not logged in!");
+        return;
       }
+
+     const { data } = await axios.post(
+       "http://localhost:4000/api/rooms/create",
+       { userId: storedUser._id }, // send user id
+       { headers: { Authorization: `Bearer ${token}` } }
+     );
+
+      setRoomCode(data.roomCode);
+      toast.success(`Room created! Code: ${data.roomCode}`);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to join room");
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to create room");
     }
   };
+
+const handleJoinRoom = async () => {
+  try {
+    const storedUser = JSON.parse(localStorage.getItem("userInfo"));
+    const token = storedUser?.token;
+
+    if (!token) return toast.error("You are not logged in!");
+    if (joinCode.length !== 6)
+      return toast.error("Enter a valid 6-digit room code");
+
+    console.log("Joining room:", joinCode);
+
+    const { data } = await axios.post(
+      `http://localhost:4000/api/rooms/join/${joinCode}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    console.log("Join room response:", data);
+    toast.info("Waiting for opponent to join...");
+    navigate(`/game/${joinCode}`); // ✅ redirect immediately
+  } catch (error) {
+    console.error("Join room error:", error);
+    toast.error(error.response?.data?.message || "Failed to join room");
+  }
+};
+
+
 
   const checkRoomStatus = async (roomCode) => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -87,7 +84,6 @@ const Home = () => {
       setTimeout(() => checkRoomStatus(roomCode), 1000);
     }
   };
-
 
   const handlePlayAI = () => {
     navigate("/ai");

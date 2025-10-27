@@ -26,7 +26,8 @@ export const createRoom = async (req, res) => {
 // Join Room
 export const joinRoom = async (req, res) => {
   try {
-    const { roomCode, userId } = req.body;
+    const roomCode = req.params.roomCode;
+    const userId = req.user._id; // ✅ get from auth middleware, not body
 
     const room = await Room.findOne({ roomCode }).populate(
       "players",
@@ -37,14 +38,21 @@ export const joinRoom = async (req, res) => {
     if (room.players.length >= 2)
       return res.status(400).json({ message: "Room is full" });
 
-    if (!room.players.includes(userId)) room.players.push(userId);
-    await room.save();
+    // ✅ Convert ObjectIds to strings for comparison
+    const playerIds = room.players.map((p) => p._id.toString());
+    if (!playerIds.includes(userId.toString())) {
+      room.players.push(userId);
+      room.status = "started"; // ✅ optional: auto-start when both joined
+      await room.save();
+    }
 
-    res.status(200).json(room);
+    res.status(200).json({ message: "Joined room successfully", room });
   } catch (error) {
+    console.error("Join room error:", error);
     res.status(500).json({ message: "Failed to join room", error });
   }
 };
+
 
 // Get Room Info
 export const getRoom = async (req, res) => {

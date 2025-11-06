@@ -86,7 +86,7 @@ const handleJoinRoom = async () => {
   };
 
   const handlePlayAI = () => {
-    navigate("/ai");
+    navigate("/play/ai");
   };
 
   return (

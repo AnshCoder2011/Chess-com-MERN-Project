@@ -4,6 +4,7 @@ import Register from "../pages/Auth/Register.jsx";
 import Home from "../pages/Home.jsx"; // placeholder for homepage
 import GameRoom from "../pages/GameRoom.jsx";
 import SinglePlayerGame from "../pages/SinglePlayerGame.jsx";
+import LandingPage from "../pages/LandingPage.jsx";
 
 const AppRouter = () => {
   return (
@@ -13,6 +14,7 @@ const AppRouter = () => {
       <Route path="/home" element={<Home />} />
       <Route path="/game/:roomCode" element={<GameRoom />} />
       <Route path="/play/ai" element={<SinglePlayerGame />} />
+      <Route path="/" element={<LandingPage />} />
     </Routes>
   );
 };

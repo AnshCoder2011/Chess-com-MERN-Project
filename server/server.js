@@ -35,6 +35,7 @@ const rooms = {}; // { roomCode: { white: userObj, black: userObj } }
 io.on("connection", (socket) => {
   console.log("🟢 New client connected:", socket.id);
 
+  // ---------------------- ROOM JOINING ----------------------
   socket.on("joinRoom", ({ roomCode, user }) => {
     console.log(`User ${user.username} joined room ${roomCode}`);
     socket.join(roomCode);
@@ -63,17 +64,25 @@ io.on("connection", (socket) => {
     }
   });
 
+  // ---------------------- MOVE EVENTS ----------------------
   socket.on("move", ({ roomCode, from, to, promotion }) => {
     socket.to(roomCode).emit("move", { from, to, promotion });
   });
 
+  // ---------------------- GAME OVER ----------------------
   socket.on("gameOver", ({ roomId, winner }) => {
     if (!roomId) return console.error("roomId missing in gameOver event");
     io.to(roomId).emit("gameOver", { winner });
   });
 
+  // ---------------------- CHAT EVENTS (NEW) ----------------------
+  socket.on("sendMessage", ({ roomId, message, sender }) => {
+    if (!roomId || !message || !sender) return;
+    console.log(`💬 Message from ${sender} in ${roomId}: ${message}`);
+    io.to(roomId).emit("receiveMessage", { message, sender });
+  });
 
-
+  // ---------------------- DISCONNECT ----------------------
   socket.on("disconnect", () => {
     console.log("🔴 Client disconnected:", socket.id);
   });

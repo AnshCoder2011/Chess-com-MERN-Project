@@ -6,6 +6,7 @@ import cors from "cors";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import roomRoutes from "./src/routes/roomRoutes.js";
+import path from "path";
 
 dotenv.config();
 connectDB();
@@ -14,13 +15,17 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("RockChess API is running...");
-});
+const _dirname = path.resolve();
+
+
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
+app.use(express.static(path.join(_dirname, "/client/dist")))
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(_dirname, "client", "dist", "index.html"))
+})
 
 // ✅ Socket.io setup
 const server = http.createServer(app);
@@ -29,6 +34,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
 
 const rooms = {}; // { roomCode: { white: userObj, black: userObj } }
 

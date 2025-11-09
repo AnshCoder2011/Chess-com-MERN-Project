@@ -5,8 +5,9 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "npx nodemon server.js",
+    "start": "node server/server.js",
+    "dev": "npx nodemon server/server.js",
+    "build": "npm install && npm install --prefix client && npm run build --prefix client",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

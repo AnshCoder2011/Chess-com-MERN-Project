@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar";
 import Confetti from "react-confetti";
 import ChatBox from "../components/ChatBox";
 
-const socket = io("http://localhost:4000");
+const socket = io("https://chess-com-mern-project-1.onrender.com");
 
 const GameRoom = () => {
   const { roomCode } = useParams();
@@ -62,7 +62,7 @@ const GameRoom = () => {
       try {
         const token = user?.token;
         const { data } = await axios.get(
-          `http://localhost:4000/api/rooms/${roomCode}`,
+          `https://chess-com-mern-project-1.onrender.com/api/rooms/${roomCode}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setRoom(data);

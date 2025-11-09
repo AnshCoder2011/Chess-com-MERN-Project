@@ -28,7 +28,7 @@ const Home = () => {
       }
 
      const { data } = await axios.post(
-       "http://localhost:4000/api/rooms/create",
+       "https://chess-com-mern-project-1.onrender.com/api/rooms/create",
        { userId: storedUser._id }, // send user id
        { headers: { Authorization: `Bearer ${token}` } }
      );
@@ -53,7 +53,7 @@ const handleJoinRoom = async () => {
     console.log("Joining room:", joinCode);
 
     const { data } = await axios.post(
-      `http://localhost:4000/api/rooms/join/${joinCode}`,
+      `https://chess-com-mern-project-1.onrender.com/api/rooms/join/${joinCode}`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -74,7 +74,7 @@ const handleJoinRoom = async () => {
     const token = storedUser?.token;
 
     const { data } = await axios.get(
-      `http://localhost:4000/api/rooms/${roomCode}`,
+      `https://chess-com-mern-project-1.onrender.com/api/rooms/${roomCode}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 

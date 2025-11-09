@@ -13,7 +13,12 @@ connectDB();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://chess-com-mern-project-1-client.onrender.com", // your React site URL
+    credentials: true,
+  })
+);
 
 const _dirname = path.resolve();
 

@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        "https://chess-com-mern-project-1.onrender.com/api/auth/login",
         formData
       );
       localStorage.setItem("userInfo", JSON.stringify(data));

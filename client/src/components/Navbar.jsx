@@ -21,30 +21,28 @@ const Navbar = () => {
   }, []);
 
   // Handle updating username
-const handleSave = async () => {
-  try {
-    const user = JSON.parse(localStorage.getItem("userInfo")); // get logged-in user
-    const config = {
-      headers: {
-        Authorization: `Bearer ${user.token}`, // pass JWT token
-      },
-    };
+  const handleSave = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("userInfo")); // get logged-in user
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`, // pass JWT token
+        },
+      };
 
-    const { data } = await axios.put(
-      `http://localhost:4000/api/auth/update/${user._id}`,
-      { username: userName },
-      config
-    );
+      const { data } = await axios.put(
+        `https://chess-com-mern-project-1.onrender.com/api/auth/update/${user._id}`,
+        { username: userName },
+        config
+      );
 
-    localStorage.setItem("userInfo", JSON.stringify(data)); // update localStorage
-    toast.success("Profile updated successfully!");
-    setShowProfile(false); // close the dialog
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Update failed");
-  }
-};
-
-
+      localStorage.setItem("userInfo", JSON.stringify(data)); // update localStorage
+      toast.success("Profile updated successfully!");
+      setShowProfile(false); // close the dialog
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Update failed");
+    }
+  };
 
   // Handle Logout
   const handleLogout = () => {
